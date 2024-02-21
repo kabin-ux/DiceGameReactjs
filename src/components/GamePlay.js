@@ -1,73 +1,119 @@
 import React, {useState} from 'react'
-import { Button, OutlineButton } from '../styled/Button';
 import TotalScore from './TotalScore';
 import NumberSelector from './NumberSelector';
 import styled from 'styled-components';
 import RollDice from './RollDice';
+import Rules from './Rules';
 
 const GamePlay = () => {
-    const [score, setScore] = useState(0);
-    const [selectedNumber, setSelectedNumber] = useState();
-    const [currentDice, setCurrentDice] = useState(1); // Initialize with a default value
-    const [error, setError] = useState('');
+  const [score, setScore] = useState(0);
+  const [selectedNumber, setSelectedNumber] = useState(); 
+  const [currentDice, setCurrentDice] = useState(1);
+  const [error, setError] = useState();
+  const [showRules, setShowRules] = useState(false);
 
-    const generateNumber = (min, max) => {
-        return Math.floor(Math.random() * (max - min + 1) + min); // Fix random number generation
-    };
+  const generateRandomNumber = (min, max) => {
+    console.log(Math.floor(Math.random() * (max - min) + min));
+    return  Math.floor(Math.random() * (max - min) + min);
 
-    const rollDice = () => {
-        if(!selectedNumber) {
-            setError('You have not selected any number');
-            return;
-        }
+  };
 
-        const randomNumber = generateNumber(1, 6);
-        setCurrentDice(randomNumber);
+  const rollDice = () => {
 
-        if (selectedNumber === randomNumber){
-            setScore(prev => prev + randomNumber);
-        }else {
-            setScore(prev => prev - 2)
-        }
+    if(!selectedNumber) {
+      setError("Please select a number.")
 
-        setSelectedNumber(undefined);
-    };
+      return};
 
-    const resetScore = () => {
-        setScore(0);
+    const randomNumber = generateRandomNumber(1, 7)
+
+    setCurrentDice(() => randomNumber);
+
+
+    if (selectedNumber ===  randomNumber) {
+      setScore((prev) =>prev +randomNumber)
+    }else{
+      setScore((prev) => prev -2 );
     }
 
-    return (
-        <MainContainer>
-            <div className='top-section'>
-                <TotalScore score={score} />
-                <NumberSelector setError = {setError} error={error} selectedNumber={selectedNumber} setSelectedNumber={setSelectedNumber} />
-            </div>      
-            <RollDice currentDice={currentDice} rollDice={rollDice} />
-            <div className='btns'>
-                <OutlineButton onClick={resetScore} >Reset</OutlineButton>
-                {/* <Button>Show Rules</Button> */}
-            </div>
-        </MainContainer>
-    )
+    setSelectedNumber(undefined);
+
+  };
+
+  const resetScore = () => {
+    setScore(0);
+    setSelectedNumber(undefined);
+    setCurrentDice(1);
+  };
+
+
+  return (
+    <MainContainer>
+      <div className='top-items'>
+        <TotalScore score={score}/>
+        <NumberSelector selectedNumber = {selectedNumber} setSelectedNumber = {setSelectedNumber} error={error} setError={setError}/>
+      </div>
+      <RollDice currentDice = {currentDice} setCurrentDice ={setCurrentDice} rollDice = {rollDice}/>
+      <div className='btns'>
+        <OutlineButton onClick={() => resetScore()}>Reset</OutlineButton>
+        <RuleButton onClick={() => setShowRules((prev) => !prev) } >{showRules ? 'Hide': 'Show'} Rules</RuleButton>
+      </div>
+
+      {showRules && <Rules />}
+    </MainContainer>
+  )
 }
 
 export default GamePlay;
 
 const MainContainer = styled.div`
-    padding-top: 70px;
-    .top-section{
-        display: flex;
-        justify-content: space-between;
-        align-items: end;
-    }
+  .top-items{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 70px;
+  }
 
-    .btns{
-        margin-top: 40px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-    }
+  .btns{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    gap: 20px;
+  }
 `;
+
+const OutlineButton = styled.button`
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 5px;
+    background-color: #000;
+    min-width: 220px;
+    border: 1px solid transparent;
+    font-size: 16px;
+    cursor: pointer;
+    /* align-items: c; */
+    &:hover{
+        background-color: #fff;
+        color: #000;
+        border: 1px solid black;
+        transition: 0.2s background ease-in-out ;
+    }
+`;  
+
+const RuleButton = styled.button`
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 5px;
+    background-color: #000;
+    min-width: 220px;
+    border: 1px solid transparent;
+    font-size: 16px;
+    cursor: pointer;
+
+    &:hover{
+        background-color: #fff;
+        color: #000;
+        border: 1px solid black;
+        transition: 0.2s background ease-in-out ;
+    }
+`;  
